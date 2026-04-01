@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5px;
+            overflow: hidden;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 95vh;
+            overflow-y: auto;
+        }
+
+        .title {
+            text-align: center;
+            color: #2E86AB;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .rules {
+            background: #f0f2f5;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+        }
+
+        .rules h3 {
+            color: #2E86AB;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .rules ul {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .rules li {
+            margin: 2px 0;
+            font-size: 0.75rem;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-bottom: 3px;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        .divider {
+            border-top: 2px solid #e0e0e0;
+            margin: 8px 0;
+        }
+
+        .game-section h2 {
+            text-align: center;
+            color: #2E86AB;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .choices-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .choice-btn {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 10px 6px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-height: 70px;
+        }
+
+        .choice-btn:nth-child(1) {
+            background: linear-gradient(135deg, rgb(255, 0, 127) 0%, rgb(255, 20, 147) 100%);
+            color: white;
+            border: none;
+        }
+
+        .choice-btn:nth-child(1):hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.9),
+                0 0 35px rgba(255, 20, 147, 0.7);
+        }
+
+        .choice-btn:nth-child(2) {
+            background: linear-gradient(135deg, rgb(0, 255, 255) 0%, rgb(30, 144, 255) 100%);
+            color: white;
+            border: none;
+        }
+
+        .choice-btn:nth-child(2):hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.9),
+                0 0 35px rgba(30, 144, 255, 0.7);
+        }
+
+        .choice-btn:nth-child(3) {
+            background: linear-gradient(135deg, rgb(255, 215, 0) 0%, rgb(255, 140, 0) 100%);
+            color: white;
+            border: none;
+        }
+
+        .choice-btn:nth-child(3):hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.9),
+                0 0 35px rgba(255, 140, 0, 0.7);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.95);
+        }
+
+        .choice-emoji {
+            font-size: 1.4rem;
+        }
+
+        .choice-text {
+            font-size: 0.75rem;
+        }
+
+        .result-container {
+            display: none;
+            margin-bottom: 8px;
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-display {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 6px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .player-choice,
+        .computer-choice {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .choice-label {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .choice-emoji-large {
+            font-size: 1.6rem;
+        }
+
+        .vs-symbol {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #999;
+        }
+
+        .game-result {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 8px;
+            word-wrap: break-word;
+        }
+
+        .game-result.you-win {
+            background-color: #90EE90;
+            color: #006400;
+        }
+
+        .game-result.you-lose {
+            background-color: #FFB6C6;
+            color: #8B0000;
+        }
+
+        .game-result.tie {
+            background-color: #FFE4B5;
+            color: #FF8C00;
+        }
+
+        .reset-btn {
+            width: 100%;
+            background: linear-gradient(135deg, rgb(0, 102, 204) 0%, rgb(0, 153, 255) 50%, rgb(0, 102, 204) 100%);
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 102, 204, 0.9),
+                0 0 35px rgba(0, 153, 255, 0.7);
+        }
+
+        .reset-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            .title {
+                font-size: 1.3rem;
+                margin-bottom: 8px;
+            }
+
+            .rules {
+                background: #f0f2f5;
+                padding: 6px 8px;
+                border-radius: 6px;
+                margin-bottom: 8px;
+                font-size: 0.7rem;
+            }
+
+            .rules h3 {
+                color: #2E86AB;
+                margin-bottom: 3px;
+                font-size: 0.75rem;
+            }
+
+            .rules li {
+                margin: 2px 0;
+                font-size: 0.65rem;
+                line-height: 1.2;
+            }
+
+            .stats-container {
+                gap: 6px;
+                margin-bottom: 8px;
+            }
+
+            .stat-box {
+                padding: 8px;
+            }
+
+            .stat-value {
+                font-size: 1.2rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+
+            .divider {
+                margin: 6px 0;
+            }
+
+            .game-section h2 {
+                font-size: 0.95rem;
+                margin-bottom: 8px;
+            }
+
+            .choice-btn {
+                padding: 8px 6px;
+                font-size: 11px;
+                gap: 4px;
+                min-height: 60px;
+            }
+
+            .choice-emoji {
+                font-size: 1.2rem;
+            }
+
+            .choice-btn:nth-child(1):hover,
+            .choice-btn:nth-child(2):hover,
+            .choice-btn:nth-child(3):hover {
+                transform: scale(1.03);
+            }
+
+            .game-result {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .choice-emoji-large {
+                font-size: 1.4rem;
+            }
+
+            .reset-btn {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+
+            .title {
+                font-size: 1rem;
+                margin-bottom: 5px;
+            }
+
+            .rules {
+                background: #f0f2f5;
+                padding: 5px 6px;
+                border-radius: 5px;
+                margin-bottom: 5px;
+                font-size: 0.65rem;
+            }
+
+            .rules h3 {
+                color: #2E86AB;
+                margin-bottom: 2px;
+                font-size: 0.7rem;
+            }
+
+            .rules li {
+                margin: 1px 0;
+                font-size: 0.6rem;
+                line-height: 1.1;
+            }
+
+            .stats-container {
+                gap: 4px;
+                margin-bottom: 5px;
+            }
+
+            .stat-box {
+                padding: 6px;
+            }
+
+            .stat-value {
+                font-size: 1rem;
+            }
+
+            .stat-label {
+                font-size: 0.6rem;
+            }
+
+            .divider {
+                margin: 4px 0;
+            }
+
+            .game-section h2 {
+                margin-bottom: 6px;
+                font-size: 0.85rem;
+            }
+
+            .choices-container {
+                gap: 5px;
+                margin-bottom: 6px;
+            }
+
+            .choice-btn {
+                padding: 6px 4px;
+                font-size: 9px;
+                min-height: 50px;
+                gap: 2px;
+            }
+
+            .choice-emoji {
+                font-size: 1rem;
+            }
+
+            .choice-text {
+                font-size: 0.6rem;
+            }
+
+            .choice-btn:nth-child(1):hover,
+            .choice-btn:nth-child(2):hover,
+            .choice-btn:nth-child(3):hover {
+                transform: scale(1.01);
+            }
+
+            .result-container {
+                margin-bottom: 5px;
+            }
+
+            .result-display {
+                gap: 4px;
+                margin-bottom: 5px;
+            }
+
+            .choice-label {
+                font-size: 0.6rem;
+            }
+
+            .choice-emoji-large {
+                font-size: 1.2rem;
+            }
+
+            .vs-symbol {
+                font-size: 0.95rem;
+            }
+
+            .game-result {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
+
+            .reset-btn {
+                padding: 6px;
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="title">🎮 Rock Paper Scissors Game 🎮</h1>
+
+        <div class="rules">
+            <h3>Game Rules:</h3>
+            <ul>
+                <li><strong>Rock</strong> 👊 vs Scissors ✌️</li>
+                <li><strong>Scissors</strong> ✌️ vs Paper 🤚</li>
+                <li><strong>Paper</strong> 🤚 vs Rock 👊</li>
+            </ul>
+        </div>
+
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-label">Wins</div>
+                <div class="stat-value" id="wins">{{ wins }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Ties</div>
+                <div class="stat-value" id="ties">{{ ties }}</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Losses</div>
+                <div class="stat-value" id="losses">{{ losses }}</div>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="game-section">
+            <h2>Make Your Choice:</h2>
+
+            <div class="choices-container">
+                <button class="choice-btn" onclick="playGame('rock')">
+                    <span class="choice-emoji">👊</span>
+                    <span class="choice-text">Rock</span>
+                </button>
+                <button class="choice-btn" onclick="playGame('paper')">
+                    <span class="choice-emoji">🤚</span>
+                    <span class="choice-text">Paper</span>
+                </button>
+                <button class="choice-btn" onclick="playGame('scissors')">
+                    <span class="choice-emoji">✌️</span>
+                    <span class="choice-text">Scissors</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="result-container" id="result-container">
+            <div class="divider"></div>
+
+            <div class="result-display">
+                <div class="player-choice">
+                    <div class="choice-label">You chose:</div>
+                    <div class="choice-emoji-large" id="player-emoji">👊</div>
+                </div>
+                <div class="vs-symbol">⚔️</div>
+                <div class="computer-choice">
+                    <div class="choice-label">Computer chose:</div>
+                    <div class="choice-emoji-large" id="computer-emoji">👊</div>
+                </div>
+            </div>
+
+            <div class="game-result" id="result-text"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <button class="reset-btn" onclick="resetStats()">🔄 Reset Stats</button>
+    </div>
+
+    <script>
+        const emojiMap = {
+            'rock': '👊',
+            'paper': '🤚',
+            'scissors': '✌️'
+        };
+
+        function playGame(choice) {
+            fetch('/play', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ choice: choice })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Update stats
+                    document.getElementById('wins').textContent = data.wins;
+                    document.getElementById('ties').textContent = data.ties;
+                    document.getElementById('losses').textContent = data.losses;
+
+                    // Update result display
+                    document.getElementById('player-emoji').textContent = emojiMap[data.user_choice];
+                    document.getElementById('computer-emoji').textContent = emojiMap[data.computer_choice];
+
+                    // Update result text with appropriate class
+                    const resultElement = document.getElementById('result-text');
+                    resultElement.textContent = data.result;
+                    resultElement.className = 'game-result ' + data.result_class;
+
+                    // Show result container
+                    document.getElementById('result-container').classList.add('show');
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function resetStats() {
+            fetch('/reset', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('wins').textContent = '0';
+                    document.getElementById('ties').textContent = '0';
+                    document.getElementById('losses').textContent = '0';
+                    document.getElementById('result-container').classList.remove('show');
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Show result if it exists from page load
+        {% if last_result %}
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('player-emoji').textContent = emojiMap['{{ last_user_choice }}'];
+            document.getElementById('computer-emoji').textContent = emojiMap['{{ last_computer_choice }}'];
+            const resultElement = document.getElementById('result-text');
+            resultElement.textContent = '{{ last_result }}';
+            resultElement.className = 'game-result {{ last_class }}';
+            document.getElementById('result-container').classList.add('show');
+        });
+        {% endif %}
+    </script>
+</body>
+
+</html>
